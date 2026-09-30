@@ -1,0 +1,23 @@
+# Tokens, contraseñas y claves API (¡NUNCA SUBIR ESTO!)
+.env
+credentials.json
+gen-lang-client-*.json
+
+# Entorno virtual de Python
+venv/
+env/
+.venv/
+
+# Archivos de caché y logs de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Notas personales o archivos de prueba
+bots tlg.txt
+gemini_output.txt
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
