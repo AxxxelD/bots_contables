@@ -138,11 +138,23 @@ def generar_pdf_mes(mes, anio, sheet_id, nombre_sede):
             concepto = str(r.get('Concepto', '')).replace('\n', ' ')[:45]
             concepto = concepto.encode('latin-1', 'replace').decode('latin-1')
             
+            tasa_str = str(r.get('Tasa BCV', '0')).replace(',', '.')
+            try: tasa_bcv = float(tasa_str)
+            except: tasa_bcv = 0.0
+            
+            acum_str = str(r.get('Acumulado', '0')).replace(',', '.')
+            try: acum_bs = float(acum_str)
+            except: acum_bs = 0.0
+            
+            acum_usd_str = str(r.get('Acumulado $', '0')).replace(',', '.')
+            try: acum_usd = float(acum_usd_str)
+            except: acum_usd = 0.0
+
             pdf.cell(col_widths[5], 8, concepto, border='B', fill=fill)
-            pdf.cell(col_widths[6], 8, str(r.get('Tasa BCV', ''))[:10], border='B', align='C', fill=fill)
+            pdf.cell(col_widths[6], 8, f"{tasa_bcv:,.2f}", border='B', align='C', fill=fill)
             pdf.cell(col_widths[7], 8, f"{usd_monto:,.2f}", border='B', align='R', fill=fill)
-            pdf.cell(col_widths[8], 8, str(r.get('Acumulado', ''))[:15], border='B', align='R', fill=fill)
-            pdf.cell(col_widths[9], 8, str(r.get('Acumulado $', ''))[:15], border='B', align='R', fill=fill)
+            pdf.cell(col_widths[8], 8, f"{acum_bs:,.2f}", border='B', align='R', fill=fill)
+            pdf.cell(col_widths[9], 8, f"{acum_usd:,.2f}", border='B', align='R', fill=fill)
             pdf.ln()
             fill = not fill
             
@@ -479,13 +491,14 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 
         next_row = len(sheet.col_values(1)) + 1
         
-        cantidad_dolares = f"=E{next_row}/G{next_row}"
+        tasa = round(tasa, 2)
+        cantidad_dolares = f"=ROUND(E{next_row}/G{next_row}, 2)"
         if next_row == 2:
-            acumulado = f"=IF(A2=\"Ingreso\",E2,-E2)"
-            acumulado_usd = f"=IF(A2=\"Ingreso\",H2,-H2)"
+            acumulado = f"=ROUND(IF(A2=\"Ingreso\",E2,-E2), 2)"
+            acumulado_usd = f"=ROUND(IF(A2=\"Ingreso\",H2,-H2), 2)"
         else:
-            acumulado = f"=I{next_row-1}+(IF(A{next_row}=\"Ingreso\",E{next_row},-E{next_row}))"
-            acumulado_usd = f"=J{next_row-1}+(IF(A{next_row}=\"Ingreso\",H{next_row},-H{next_row}))"
+            acumulado = f"=ROUND(I{next_row-1}+(IF(A{next_row}=\"Ingreso\",E{next_row},-E{next_row})), 2)"
+            acumulado_usd = f"=ROUND(J{next_row-1}+(IF(A{next_row}=\"Ingreso\",H{next_row},-H{next_row})), 2)"
             
         row_data = [
             tipo_movimiento,
@@ -506,9 +519,9 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if comision_bs > 0:
             tiene_comision = "1"
             comision_row_num = next_row + 1
-            com_dolares = f"=E{comision_row_num}/G{comision_row_num}"
-            com_acumulado = f"=I{comision_row_num-1}+(IF(A{comision_row_num}=\"Ingreso\",E{comision_row_num},-E{comision_row_num}))"
-            com_acumulado_usd = f"=J{comision_row_num-1}+(IF(A{comision_row_num}=\"Ingreso\",H{comision_row_num},-H{comision_row_num}))"
+            com_dolares = f"=ROUND(E{comision_row_num}/G{comision_row_num}, 2)"
+            com_acumulado = f"=ROUND(I{comision_row_num-1}+(IF(A{comision_row_num}=\"Ingreso\",E{comision_row_num},-E{comision_row_num})), 2)"
+            com_acumulado_usd = f"=ROUND(J{comision_row_num-1}+(IF(A{comision_row_num}=\"Ingreso\",H{comision_row_num},-H{comision_row_num})), 2)"
             comision_row_data = [
                 'Egreso',
                 extracted_data.get('fecha', ''),
