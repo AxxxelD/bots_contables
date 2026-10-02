@@ -554,7 +554,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         trace = traceback.format_exc()
         with open('error_log.txt', 'a') as f:
             f.write(trace + '\n')
-        await query.edit_message_text(f"❌ Hubo un error procesando la imagen. Error interno: {e}")
+        error_texto = str(e)
+        if "503" in error_texto or "UNAVAILABLE" in error_texto:
+            await query.edit_message_text("⏳ Los servidores de lectura automática están muy ocupados en este instante. Por favor, reenvía la imagen en unos 30 segundos.")
+        else:
+            await query.edit_message_text("❌ Ocurrió un error inesperado al leer el comprobante. Intenta enviarlo de nuevo o revisa si la imagen es clara.")
 
 
 def obtener_fechas_disponibles(sheet_id):

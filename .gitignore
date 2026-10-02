@@ -17,6 +17,7 @@ __pycache__/
 # Notas personales o archivos de prueba
 bots tlg.txt
 gemini_output.txt
+error_log.txt
 
 # Archivos de sistema operativo
 .DS_Store
