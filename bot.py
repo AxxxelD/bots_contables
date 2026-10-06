@@ -405,7 +405,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "tipo_destinatario": "Clasifica como 'Persona' o 'Comercio'. Usa 'Comercio' si ves un RIF J/G/C, el nombre de una empresa, o si dice 'Pago Plus Comercios' o P2C. De lo contrario, asume 'Persona'."
         }
         """
-        max_retries = 3
+        max_retries = 6
         response = None
         for attempt in range(max_retries):
             try:
@@ -429,8 +429,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             except Exception as e:
                 if attempt == max_retries - 1:
                     raise e
-                logger.warning(f"Intento {attempt+1} fallido (posible 503): {e}. Reintentando en 3s...")
-                await asyncio.sleep(3)
+                logger.warning(f"Intento {attempt+1} fallido (posible 503): {e}. Reintentando en 5s...")
+                await asyncio.sleep(5)
 
         import re
         json_text = response.text.strip()
