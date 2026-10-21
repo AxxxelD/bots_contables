@@ -386,7 +386,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("Error: El mensaje expiró o no se encuentra en memoria. Por favor, reenvíalo.")
         return
         
-    await query.edit_message_text(f"⏳ Procesando como {tipo_movimiento}... Analizando con IA...")
+    await query.edit_message_text(f"⏳ Procesando como {tipo_movimiento}...")
     
     msg_data = temp_messages.pop(message_id)
     
@@ -405,7 +405,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "tipo_destinatario": "Clasifica como 'Persona' o 'Comercio'. Usa 'Comercio' si ves un RIF J/G/C, el nombre de una empresa, o si dice 'Pago Plus Comercios' o P2C. De lo contrario, asume 'Persona'."
         }
         """
-        max_retries = 6
+        max_retries = 1
         response = None
         for attempt in range(max_retries):
             try:
